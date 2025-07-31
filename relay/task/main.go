@@ -36,7 +36,7 @@ func RelayTaskSubmit(c *gin.Context) {
 		return
 	}
 
-	quotaInstance := relay_util.NewQuota(c, taskAdaptor.GetModelName(), 1000)
+	quotaInstance := relay_util.NewQuota(c, taskAdaptor.GetModelName(), 1000, taskAdaptor.GetModelName())
 	if errWithOA := quotaInstance.PreQuotaConsumption(); errWithOA != nil {
 		taskAdaptor.HandleError(base.OpenAIErrToTaskErr(errWithOA))
 		return

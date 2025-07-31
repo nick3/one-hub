@@ -154,7 +154,7 @@ func executeQuery(c *gin.Context, chatProvider providersBase.ChatInterface, quer
 	}
 
 	// 处理配额
-	quota := relay_util.NewQuota(c, model, 0)
+	quota := relay_util.NewQuota(c, model, 0, model)
 	if opErr = quota.PreQuotaConsumption(); opErr != nil {
 		return "", opErr
 	}

@@ -27,6 +27,8 @@ func (r *relayTranscriptions) setRequest() error {
 
 	r.setOriginalModel(r.request.Model)
 
+	r.userModelName = r.request.Model
+
 	return nil
 }
 

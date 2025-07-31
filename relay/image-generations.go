@@ -6,6 +6,7 @@ import (
 	providersBase "one-api/providers/base"
 	"one-api/types"
 	"strings"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,6 +45,8 @@ func (r *relayImageGenerations) setRequest() error {
 	}
 
 	r.setOriginalModel(r.request.Model)
+
+	r.userModelName = r.request.Model
 
 	return nil
 }

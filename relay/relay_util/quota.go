@@ -16,7 +16,8 @@ import (
 )
 
 type Quota struct {
-	modelName        string
+	modelName        string // 实际转发到渠道的模型名
+	userModelName    string // 用户请求的模型名（映射后，日志用）
 	promptTokens     int
 	price            model.Price
 	groupName        string
@@ -35,17 +36,20 @@ type Quota struct {
 	extraBillingData  map[string]ExtraBillingData
 }
 
-func NewQuota(c *gin.Context, modelName string, promptTokens int) *Quota {
+// userModelName: 用户请求的模型名（映射后）
+func NewQuota(c *gin.Context, modelName string, promptTokens int, userModelName string) *Quota {
 	quota := &Quota{
-		modelName:    modelName,
-		promptTokens: promptTokens,
-		userId:       c.GetInt("id"),
-		channelId:    c.GetInt("channel_id"),
-		tokenId:      c.GetInt("token_id"),
-		HandelStatus: false,
+		modelName:     modelName,
+		userModelName: userModelName,
+		promptTokens:  promptTokens,
+		userId:        c.GetInt("id"),
+		channelId:     c.GetInt("channel_id"),
+		tokenId:       c.GetInt("token_id"),
+		HandelStatus:  false,
 	}
 
-	quota.price = *model.PricingInstance.GetPrice(quota.modelName)
+	// 查价时用用户请求的模型名
+	quota.price = *model.PricingInstance.GetPrice(userModelName)
 	quota.groupRatio = c.GetFloat64("group_ratio")
 	quota.groupName = c.GetString("token_group")
 	quota.inputRatio = quota.price.GetInput() * quota.groupRatio
@@ -155,7 +159,7 @@ func (q *Quota) completedQuotaConsumption(usage *types.Usage, tokenName string, 
 		q.channelId,
 		usage.PromptTokens,
 		usage.CompletionTokens,
-		q.modelName,
+		q.userModelName, // 日志写入用用户请求名
 		tokenName,
 		quota,
 		"",

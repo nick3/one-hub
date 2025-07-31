@@ -52,6 +52,8 @@ func (r *relayChat) setRequest() error {
 
 	r.setOriginalModel(r.chatRequest.Model)
 
+	r.userModelName = r.chatRequest.Model
+
 	otherArg := r.getOtherArg()
 
 	if otherArg == "search" {

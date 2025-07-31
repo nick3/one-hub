@@ -23,6 +23,8 @@ type relayBase struct {
 	heartbeat      *relay_util.Heartbeat
 
 	firstResponseTime time.Time
+
+	userModelName string // 用户请求的模型名（映射后）
 }
 
 type RelayBaseInterface interface {
@@ -42,6 +44,12 @@ type RelayBaseInterface interface {
 	HandleJsonError(err *types.OpenAIErrorWithStatusCode)
 	HandleStreamError(err *types.OpenAIErrorWithStatusCode)
 	SetHeartbeat(isStream bool) *relay_util.Heartbeat
+
+	getUserModelName() string
+}
+// 获取用户请求的模型名（映射后）
+func (r *relayBase) getUserModelName() string {
+	return r.userModelName
 }
 
 func (r *relayBase) getRequest() interface{} {

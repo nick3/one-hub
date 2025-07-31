@@ -31,7 +31,7 @@ func RelayRecraftAI(c *gin.Context) {
 
 	recraftProvider.SetUsage(usage)
 
-	quota := relay_util.NewQuota(c, model, 1)
+	quota := relay_util.NewQuota(c, model, 1, model)
 	if err := quota.PreQuotaConsumption(); err != nil {
 		common.AbortWithMessage(c, http.StatusServiceUnavailable, err.Error())
 		return

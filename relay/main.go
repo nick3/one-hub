@@ -116,7 +116,8 @@ func RelayHandler(relay RelayBaseInterface) (err *types.OpenAIErrorWithStatusCod
 
 	relay.getProvider().SetUsage(usage)
 
-	quota := relay_util.NewQuota(relay.getContext(), relay.getModelName(), promptTokens)
+	// relay.getUserModelName() 需返回用户请求的模型名（映射后）
+	quota := relay_util.NewQuota(relay.getContext(), relay.getModelName(), promptTokens, relay.getUserModelName())
 	if err = quota.PreQuotaConsumption(); err != nil {
 		done = true
 		return

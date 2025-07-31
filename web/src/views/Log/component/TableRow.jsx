@@ -130,7 +130,7 @@ export default function LogTableRow({ item, userIsAdmin, userGroup, columnVisibi
           </TableCell>
         )}
         {columnVisibility.type && <TableCell sx={{ p: '10px 8px' }}>{renderType(item.type, LogType, t)}</TableCell>}
-        {columnVisibility.model_name && <TableCell sx={{ p: '10px 8px' }}>{viewModelName(item.model_name, item.is_stream)}</TableCell>}
+  {columnVisibility.model_name && <TableCell sx={{ p: '10px 8px' }}>{viewModelName(item.model_name, item.is_stream, item.channel)}</TableCell>}
 
         {columnVisibility.duration && (
           <TableCell sx={{ p: '10px 8px' }}>
@@ -184,9 +184,24 @@ LogTableRow.propTypes = {
   columnVisibility: PropTypes.object
 };
 
-function viewModelName(model_name, isStream) {
+function viewModelName(model_name, isStream, channel) {
   if (!model_name) {
     return '';
+  }
+
+  // 优先通过渠道的 model_mapping 反查 key（即映射后的模型名称）
+  let mappedName = model_name;
+  if (channel && channel.model_mapping) {
+    try {
+      const mapping = JSON.parse(channel.model_mapping);
+      // 反查 key
+      const found = Object.entries(mapping).find(([key, value]) => value === model_name);
+      if (found) {
+        mappedName = found[0];
+      }
+    } catch (e) {
+      // ignore parse error
+    }
   }
 
   if (isStream) {
@@ -204,16 +219,16 @@ function viewModelName(model_name, isStream) {
           }
         }}
       >
-        <Label color="primary" variant="outlined" copyText={model_name}>
-          {model_name}
+        <Label color="primary" variant="outlined" copyText={mappedName}>
+          {mappedName}
         </Label>
       </Badge>
     );
   }
 
   return (
-    <Label color="primary" variant="outlined" copyText={model_name}>
-      {model_name}
+    <Label color="primary" variant="outlined" copyText={mappedName}>
+      {mappedName}
     </Label>
   );
 }

@@ -25,6 +25,7 @@ type RelayModeChatRealtime struct {
 	providerConn   *websocket.Conn
 	quota          *relay_util.Quota
 	usage          *types.UsageEvent
+	// userModelName 字段已由 relayBase 提供
 }
 
 var upgrader = websocket.Upgrader{
@@ -60,7 +61,7 @@ func ChatRealtime(c *gin.Context) {
 		return
 	}
 
-	relay.quota = relay_util.NewQuota(relay.getContext(), relay.getModelName(), 0)
+	relay.quota = relay_util.NewQuota(relay.getContext(), relay.getModelName(), 0, relay.getUserModelName())
 
 	relay.usage = &types.UsageEvent{}
 
